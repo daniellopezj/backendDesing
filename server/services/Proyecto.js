@@ -59,3 +59,21 @@ exports.putProjects = function(req, res) {
         console.log(error);
     }
 }
+
+exports.deleteProjects = function(req, res) {
+    var id = req.params.id;
+    console.log(id);
+    try {
+        con.query(`delete from proyecto where id_proyecto=${id}`, function(error, results, fields) {
+            if (error) throw error
+            res.setHeader('Content-Type', 'application/json');
+            res.end(JSON.stringify({
+                "responseCode": 200,
+                "message": "datos eliminados",
+                "object": ""
+            }));
+        });
+    } catch (error) {
+        console.log(error);
+    }
+}

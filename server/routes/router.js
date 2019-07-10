@@ -1,5 +1,7 @@
 var empresa = require('../services/Empresa')
 var proyecto = require('../services/Proyecto')
+var detalle = require('../services/detalle_disenio')
+
 var db = require('../persistence/db');
 var con = db.CrearConexion();
 
@@ -20,4 +22,10 @@ exports.assignRoutes = function(app) {
     app.get('/showprojects/:id', proyecto.showProjects);
     app.post('/showprojects', proyecto.postProjects);
     app.put('/showprojects', proyecto.putProjects);
+    app.delete('/showprojects/:id', proyecto.deleteProjects);
+
+
+    //MANEJO DE Diseños
+    detalle.sendconnection(con);
+    detalle.postDetails(app);
 }
