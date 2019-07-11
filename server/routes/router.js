@@ -23,9 +23,10 @@ exports.assignRoutes = function(app) {
     app.post('/showprojects', proyecto.postProjects);
     app.put('/showprojects', proyecto.putProjects);
     app.delete('/showprojects/:id', proyecto.deleteProjects);
-
-
+    app.get('/selectProject/:id', proyecto.selectProject);
     //MANEJO DE Diseños
     detalle.sendconnection(con);
     detalle.postDetails(app);
+    app.get('/showDesing/:id', detalle.showDesing);
+    app.get('/loadFile/:id', detalle.sendImages);
 }

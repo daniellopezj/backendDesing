@@ -77,3 +77,29 @@ exports.deleteProjects = function(req, res) {
         console.log(error);
     }
 }
+
+exports.selectProject = function(req, res) {
+    try {
+        var id = req.params.id;
+        console.log(id);
+        con.query(`select * from proyecto where id_proyecto = ${id}`, function(error, results, fields) {
+            if (results.length == 0) {
+                res.setHeader('Content-Type', 'application/json');
+                res.end(JSON.stringify({
+                    "responseCode": 400,
+                    "message": "error",
+                    "object": ""
+                }));
+            } else {
+                res.setHeader('Content-Type', 'application/json');
+                res.end(JSON.stringify({
+                    "responseCode": 200,
+                    "message": "OK",
+                    "object": results
+                }));
+            }
+        });
+    } catch (error) {
+        console.log(error);
+    }
+}
