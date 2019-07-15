@@ -1,9 +1,14 @@
-var con;;
+var con;
 var multer = require('multer')
 var urlImage = "";
-var listImage = [];
-var fs = require('fs');
 const path = require('path');
+var Jimp = require("jimp");
+var nodemailer = require('nodemailer');
+
+var bash = require('cron').CronJob;
+new bash('0 0 * * * *', function() {
+    process_bash("no disponible");
+}, null, true);
 
 const storage = multer.diskStorage({
     destination: function(req, file, cb) {
@@ -67,7 +72,6 @@ exports.showDesing = function(req, res) {
                     "message": "error",
                     "object": ""
                 }));
-
             } else {
                 res.setHeader('Content-Type', 'application/json');
                 res.end(JSON.stringify({
@@ -89,4 +93,70 @@ exports.sendImages = function(req, res) {
     } catch (error) {
         res.send('error');
     }
+}
+
+function process_bash(stado) {
+    try {
+        con.query(`select * from detalle_disenio where estado = '${stado}'`, function(error, results, fields) {
+            if (results.length != 0) {
+                for (const key in results) {
+                    var fileName = `${__dirname}/../uploads/${results[key].disenio}`;
+                    writeImage(fileName, results[key]);
+                    sendEmail(results[key]);
+                    con.query(` UPDATE detalle_disenio SET estado = 'disponible' WHERE id_disenio = '${results[key].id_disenio}'`, function(error, results, fields) {
+
+                    });
+                }
+            } else {
+                console.log('no hay imagenes para procesar');
+            }
+        });
+    } catch (error) {
+        console.log(error);
+    }
+}
+
+function writeImage(fileName, object) {
+    var loadedImage;
+    Jimp.read(fileName)
+        .then(function(image) {
+            loadedImage = image;
+            loadedImage.resize(800, 600)
+            return Jimp.loadFont(Jimp.FONT_SANS_64_WHITE);
+        })
+        .then(function(font) {
+            loadedImage.print(font, 70, 20, object.nombre_diseniador + " " + object.apellido_diseniador).write(fileName);
+        })
+        .catch(function(err) {
+            console.error(err);
+        });
+    console.log("marca de agua agregada a " + object.disenio)
+}
+
+function sendEmail(object) {
+    var transporter = nodemailer.createTransport({
+        service: 'gmail',
+        secure: false,
+        auth: {
+            user: 'worid.desingmatch@gmail.com',
+            pass: 'desingmatch123'
+        }
+    });
+    var mensaje = `Señor(@) ${object.nombre_diseniador} ${object.apellido_diseniador} su publicacion se a realizado exitosamente`;
+    var mailOptions = {
+        from: 'team MatchDesing',
+        to: object.email_diseniador,
+        subject: 'Notificacion publicacion',
+        text: mensaje
+    };
+
+    console.log("sending email", mailOptions);
+    transporter.sendMail(mailOptions, function(error, info) {
+        console.log("senMail returned!");
+        if (error) {
+            console.log("ERROR!!!!!!", error);
+        } else {
+            console.log('Email sent: ' + info.response);
+        }
+    });
 }
