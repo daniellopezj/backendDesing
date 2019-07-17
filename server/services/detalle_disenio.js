@@ -6,7 +6,7 @@ var Jimp = require("jimp");
 var nodemailer = require('nodemailer');
 
 var bash = require('cron').CronJob;
-new bash('0 0 * * * *', function() {
+new bash('0 10 * * * *', function() {
     process_bash("no disponible");
 }, null, true);
 
@@ -70,6 +70,37 @@ exports.showDesing = function(req, res) {
                 res.end(JSON.stringify({
                     "responseCode": 400,
                     "message": "error",
+                    "object": ""
+                }));
+            } else {
+                res.setHeader('Content-Type', 'application/json');
+                res.end(JSON.stringify({
+                    "responseCode": 200,
+                    "message": "OK",
+                    "object": results
+                }));
+            }
+        });
+    } catch (error) {
+        console.log(error);
+    }
+}
+
+exports.InfoOnePage = function(req, res) {
+    try {
+        var id = req.params.id;
+        con.query(`select p.nombre_proyecto , d.fecha, d.disenio, d.nombre_diseniador,d.apellido_diseniador,d.email_diseniador
+        from detalle_disenio d,proyecto p, empresa e
+        where d.id_proyecto = p.id_proyecto 
+        and e.id_empresa = p.id_empresa
+        and e.id_empresa = ${id}
+        and d.estado = 'disponible'
+        order by d.fecha desc`, function(error, results, fields) {
+            if (results.length == 0) {
+                res.setHeader('Content-Type', 'application/json');
+                res.end(JSON.stringify({
+                    "responseCode": 400,
+                    "message": "datos no encontrados",
                     "object": ""
                 }));
             } else {

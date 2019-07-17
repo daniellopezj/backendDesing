@@ -29,4 +29,5 @@ exports.assignRoutes = function(app) {
     detalle.postDetails(app);
     app.get('/showDesing/:id', detalle.showDesing);
     app.get('/loadFile/:id', detalle.sendImages);
+    app.get('/InfoOnePage/:id', detalle.InfoOnePage);
 }
