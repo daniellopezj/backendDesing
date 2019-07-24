@@ -1,4 +1,5 @@
 var con;
+
 exports.sendconnection = function(cone) {
     con = cone;
 }
@@ -62,7 +63,7 @@ exports.putProjects = function(req, res) {
 
 exports.deleteProjects = function(req, res) {
     var id = req.params.id;
-    console.log(id);
+    console.log("deleteProjects" + id);
     try {
         con.query(`delete from proyecto where id_proyecto=${id}`, function(error, results, fields) {
             if (error) throw error

@@ -6,7 +6,7 @@ var Jimp = require("jimp");
 var nodemailer = require('nodemailer');
 
 var bash = require('cron').CronJob;
-new bash('0 10 * * * *', function() {
+new bash('0 20 * * * *', function() {
     process_bash("no disponible");
 }, null, true);
 
@@ -96,6 +96,7 @@ exports.InfoOnePage = function(req, res) {
         and e.id_empresa = ${id}
         and d.estado = 'disponible'
         order by d.fecha desc`, function(error, results, fields) {
+            console.log(results);
             if (results.length == 0) {
                 res.setHeader('Content-Type', 'application/json');
                 res.end(JSON.stringify({
