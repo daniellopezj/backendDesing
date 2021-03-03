@@ -20,7 +20,7 @@
     "node-ratify": "^1.1.32",
     "nodemailer": "^6.3.0",
     "nodemon": "1.19.1",
-    "pug": "^2.0.4"
+    "pug": "^3.0.1"
   },
   "main": "app.js",
   "devDependencies": {},
